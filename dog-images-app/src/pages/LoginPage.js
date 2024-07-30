@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
 import './LoginPage.css';  // Import the CSS file for styling
+import { baseUrl } from '../urls'; // Import baseUrl
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -21,7 +22,7 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      const { data } = await axios.post(`${baseUrl}/api/auth/login`, { email, password });
       localStorage.setItem('token', data.token); // Save token
       login({ email, password }); // Update user state
       navigate('/search');

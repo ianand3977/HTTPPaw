@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import './SearchPage.css';  // Import the CSS file for styling
+import { baseUrl } from '../urls'; // Import baseUrl
 
 const SearchPage = () => {
   const [responseCode, setResponseCode] = useState('');
@@ -56,7 +57,7 @@ const SearchPage = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://localhost:5000/api/lists',
+        `${baseUrl}/api/lists`,
         { name: 'My List', creationDate: new Date(), responseCodes: [responseCode], images: images },
         { headers: { Authorization: `Bearer ${token}` } }
       );

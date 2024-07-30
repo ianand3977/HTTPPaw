@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import './ListDetailPage.css';  // Import the CSS file for styling
+import { baseUrl } from '../urls'; // Import baseUrl
 
 const ListDetailPage = () => {
   const { id } = useParams();
@@ -18,7 +19,7 @@ const ListDetailPage = () => {
       setError(null);
       try {
         const token = localStorage.getItem('token');
-        const { data } = await axios.get(`http://localhost:5000/api/lists/${id}`, {
+        const { data } = await axios.get(`${baseUrl}/api/lists/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setList(data);
@@ -39,7 +40,7 @@ const ListDetailPage = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `http://localhost:5000/api/lists/${id}`,
+        `${baseUrl}/api/lists/${id}`,
         { name },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -55,7 +56,7 @@ const ListDetailPage = () => {
     setError(null);
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/lists/${id}`, {
+      await axios.delete(`${baseUrl}/api/lists/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       navigate('/lists');
@@ -70,7 +71,7 @@ const ListDetailPage = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.delete(
-        `http://localhost:5000/api/lists/${id}/images/${imageId}`,
+        `${baseUrl}/api/lists/${id}/images/${imageId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setList(response.data); 

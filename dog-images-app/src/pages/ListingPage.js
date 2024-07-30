@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { baseUrl } from '../urls'; // Import baseUrl
 import './ListingPage.css';  
+
 const ListingPage = () => {
   const [lists, setLists] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,7 +16,7 @@ const ListingPage = () => {
       setError(null);
       try {
         const token = localStorage.getItem('token');
-        const { data } = await axios.get('http://localhost:5000/api/lists', {
+        const { data } = await axios.get(`${baseUrl}/api/lists`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         console.log('Fetched lists:', data);
@@ -36,7 +38,7 @@ const ListingPage = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/lists/${id}`, {
+      await axios.delete(`${baseUrl}/api/lists/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       setLists(lists.filter(list => list._id !== id));

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './SignupPage.css';  // Import the CSS file for styling
+import { baseUrl } from '../urls'; // Import baseUrl
 
 const SignupPage = () => {
   const [email, setEmail] = useState('');
@@ -12,7 +13,7 @@ const SignupPage = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/auth/signup', { email, password });
+      await axios.post(`${baseUrl}/api/auth/signup`, { email, password });
       navigate('/login');
     } catch (error) {
       if (error.response && error.response.status === 400) {
