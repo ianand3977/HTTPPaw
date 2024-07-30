@@ -1,0 +1,106 @@
+/* General styles */
+.list-detail-page {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .loading, .error {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .list-details-container {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .edit-container, .view-container {
+    margin-bottom: 20px;
+  }
+  
+  .edit-input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%;
+  }
+  
+  .save-button, .cancel-button, .edit-button, .delete-list-button, .delete-button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
+  }
+  
+  .save-button {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .cancel-button {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .edit-button {
+    background-color: #2196F3;
+    color: white;
+  }
+  
+  .delete-list-button {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .delete-button {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .image-gallery {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .image-container {
+    margin: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+  }
+  
+  .image-item {
+    max-width: 100%;
+    height: auto;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .image-item:hover {
+    transform: scale(1.05);
+  }
+  
+  .image-title {
+    margin: 10px 0;
+  }
+  
+  .delete-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .delete-button:hover {
+    background-color: #d32f2f;
+  }
+  

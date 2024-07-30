@@ -1,0 +1,73 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.navbar {
+  background-color: #0A6847;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-links-left, .nav-links-right {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links-left {
+  margin-right: auto;
+}
+
+.nav-links-right {
+  margin-left: auto;
+}
+
+.nav-item {
+  position: relative;
+}
+
+.nav-link, .nav-button {
+  color: #FFF;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border: none;
+  background: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.3s, background-color 0.3s;
+}
+
+.nav-link:hover, .nav-button:hover {
+  color: #F3CA52;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+}
+
+.nav-button {
+  background: transparent;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.nav-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+}
+
+.nav-link.active {
+  color: #F3CA52;
+  border-bottom: 2px solid #F3CA52;
+  padding-bottom: 0.5rem;
+}
+
+.app-name {
+  font-size: 1.5em;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  color: #FFF;
+}

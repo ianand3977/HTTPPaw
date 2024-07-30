@@ -1,0 +1,68 @@
+/* Container for the entire page */
+.listing-page {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  min-height: 100vh;
+}
+
+/* Header styling */
+.listing-page h1 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Styling for the list container */
+.list-container {
+  list-style-type: none;
+  padding: 0;
+}
+
+/* Individual list item styling */
+.list-item {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Button styling */
+.list-item button {
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 5px;
+}
+
+/* Specific styling for the view and delete buttons */
+.view-button {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+/* Button hover effects */
+.view-button:hover {
+  background-color: #0056b3;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+/* Loading and error message styling */
+.loading, .error {
+  color: #dc3545;
+  font-weight: bold;
+}
