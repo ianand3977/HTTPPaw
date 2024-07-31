@@ -20,10 +20,12 @@ const SearchPage = () => {
     setLoading(true);
     setError('');
     setImages([]);
+    console.log('Fetching images for pattern:', pattern);
     const patternRegex = new RegExp(`^${pattern.replace(/x/g, '\\d')}`);
     const allCodes = [100, 101, 102, 200, 201, 202, 203, 204, 205, 206, 207, 208, 226, 300, 301, 302, 303, 304, 305, 306, 307, 308, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 421, 422, 423, 424, 425, 426, 427, 428, 429, 431, 451, 500, 501, 502, 503, 504, 505, 506, 507, 508, 510, 511];
 
     const matchingCodes = allCodes.filter(code => patternRegex.test(code.toString()));
+    console.log('Matching codes:', matchingCodes);
 
     try {
       if (matchingCodes.length === 0) {
@@ -35,6 +37,7 @@ const SearchPage = () => {
       const requests = matchingCodes.map(code => axios.get(`/api/${code}.json`));
       const responses = await Promise.all(requests);
       const fetchedImages = responses.map(response => response.data);
+      console.log('Fetched images:', fetchedImages);
       setImages(fetchedImages);
     } catch (error) {
       console.error('Error fetching images:', error);
@@ -50,12 +53,14 @@ const SearchPage = () => {
 
   const handleInputChange = (e) => {
     const { value } = e.target;
+    console.log('Input changed:', value);
     debouncedFetchImages(value);
   };
 
   const handleSave = async () => {
     try {
       const token = localStorage.getItem('token');
+      console.log('Saving list with response codes:', responseCode, 'and images:', images);
       await axios.post(
         `${baseUrl}/api/lists`,
         { name: 'My List', creationDate: new Date(), responseCodes: [responseCode], images: images },
