@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 
-const baseURL = 'https://http.dog';
+const jsonUrl = 'https://http.dog';
 
 router.get('/', async (req, res) => {
   const { filter } = req.query;
@@ -19,10 +19,10 @@ router.get('/', async (req, res) => {
       if (regexPattern.test(statusCode)) {
         // Fetch .jpg image and other formats
         imageUrls.push(
-          `${baseURL}/${statusCode}.jpg`,
-          `${baseURL}/${statusCode}.webp`,
-          `${baseURL}/${statusCode}.jxl`,
-          `${baseURL}/${statusCode}.avif`
+          `${jsonUrl}/${statusCode}.jpg`,
+          `${jsonUrl}/${statusCode}.webp`,
+          `${jsonUrl}/${statusCode}.jxl`,
+          `${jsonUrl}/${statusCode}.avif`
         );
       }
     }

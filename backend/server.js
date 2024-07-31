@@ -1,10 +1,10 @@
-// backend/server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const listsRoutes = require('./routes/listsRoutes'); // Ensure this path is correct
+const imageRoutes = require('./routes/imageRoutes'); // Include imageRoutes
 require('dotenv').config();
 
 const app = express();
@@ -22,6 +22,7 @@ mongoose.connect(dbPassword, {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/lists', listsRoutes); // Ensure this route is correct
+app.use('/api/images', imageRoutes); // Add imageRoutes
 
 app.get('/', (req, res) => {
   res.send('API is running...');
