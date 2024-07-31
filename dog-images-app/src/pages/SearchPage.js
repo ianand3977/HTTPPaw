@@ -32,9 +32,23 @@ const SearchPage = () => {
         return;
       }
 
-      const requests = matchingCodes.map(code => axios.get(`/api/${code}.json`));
+      const requests = matchingCodes.map(code => {
+        const url = `/api/${code}.json`;
+        console.log(`Requesting URL: ${url}`);
+        return axios.get(url);
+      });
+
       const responses = await Promise.all(requests);
-      const fetchedImages = responses.map(response => response.data);
+
+      // Check if the response is in JSON format
+      const fetchedImages = responses.map(response => {
+        if (typeof response.data === 'object') {
+          return response.data;
+        } else {
+          throw new Error('Response is not JSON');
+        }
+      });
+
       console.log('Fetched images:', fetchedImages);
       setImages(fetchedImages);
     } catch (error) {
