@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import debounce from 'lodash.debounce';
 import './SearchPage.css';  // Import the CSS file for styling
@@ -10,13 +10,8 @@ const SearchPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (responseCode) {
-      fetchImages(responseCode);
-    }
-  }, [responseCode]);
-
-  const fetchImages = async (pattern) => {
+  // Wrap fetchImages in useCallback to ensure it's stable
+  const fetchImages = useCallback(async (pattern) => {
     setLoading(true);
     setError('');
     setImages([]);
@@ -33,17 +28,24 @@ const SearchPage = () => {
       }
 
       const requests = matchingCodes.map(code => {
-        const url = `/api/${code}.json`;
+        const url = `${baseUrl}/api/images?filter=${code}`;
         console.log(`Requesting URL: ${url}`);
         return axios.get(url);
       });
 
       const responses = await Promise.all(requests);
 
-      // Check if the response is in JSON format
-      const fetchedImages = responses.map(response => {
-        if (typeof response.data === 'object') {
-          return response.data;
+      // Handle the responses to extract .jpg images and relevant details
+      const fetchedImages = responses.flatMap(response => {
+        if (Array.isArray(response.data)) {
+          // Only keep .jpg images and construct image objects with status_code and title
+          return response.data
+            .filter(url => url.endsWith('.jpg')) // Keep only .jpg images
+            .map(url => {
+              const status_code = url.split('/').pop().split('.')[0]; // Extract status code from URL
+              const title = getTitleForStatusCode(status_code); // Helper function to get title
+              return { status_code, title, image: { jpg: url } };
+            });
         } else {
           throw new Error('Response is not JSON');
         }
@@ -57,11 +59,36 @@ const SearchPage = () => {
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  // Helper function to get the title for a status code
+  const getTitleForStatusCode = (code) => {
+    const statusTitles = {
+      100: "Continue",
+      101: "Switching Protocols",
+      102: "Processing",
+      200: "OK",
+      201: "Created",
+      202: "Accepted",
+      204: "No Content",
+      400: "Bad Request",
+      401: "Unauthorized",
+      404: "Not Found",
+      500: "Internal Server Error",
+      // Add other status codes and titles as needed
+    };
+    return statusTitles[code] || "Unknown Status";
   };
 
-  const debouncedFetchImages = debounce((value) => {
+  const debouncedFetchImages = useCallback(debounce((value) => {
     setResponseCode(value);
-  }, 300);
+  }, 300), []);
+
+  useEffect(() => {
+    if (responseCode) {
+      fetchImages(responseCode);
+    }
+  }, [responseCode, fetchImages]);
 
   const handleInputChange = (e) => {
     const { value } = e.target;
@@ -108,7 +135,7 @@ const SearchPage = () => {
             ) : (
               <p>No image available</p>
             )}
-            <p><a href={image.url} target="_blank" rel="noopener noreferrer" className="view-link">View Details</a></p>
+            <p><a href={image.image.jpg} target="_blank" rel="noopener noreferrer" className="view-link">View Details</a></p>
           </div>
         ))}
       </div>
