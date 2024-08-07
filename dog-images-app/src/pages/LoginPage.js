@@ -23,11 +23,14 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(`${baseUrl}/api/auth/login`, { email, password });
-      localStorage.setItem('token', data.token); // Save token
-      login({ email, password }); // Update user state
+      login({ email, password }, data.token); // Pass user and token to login function
       navigate('/search');
     } catch (error) {
-      setError('Login failed. Please check your credentials and try again.');
+      if (error.response && error.response.data && error.response.data.error) {
+        setError(error.response.data.error);
+      } else {
+        setError('Login failed. Please check your credentials and try again.');
+      }
     }
   };
 
@@ -55,11 +58,11 @@ const LoginPage = () => {
             required
           />
           <button type="submit" className="login-button">Login</button>
-         <div>
-         <a href="https://google.com">Forgot password</a>
-         <a href="/signup">New User ? Register Now</a>
-         </div>
-
+          <div>
+            <a href="/">Forgot password</a>
+            <br />
+            <p>New User? <a href="/signup">Register Now</a></p>
+          </div>
         </form>
         {error && <p className="login-error">{error}</p>}
       </div>

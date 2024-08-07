@@ -9,6 +9,7 @@ import Navbar from './components/Navbar';
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoute';
 
+
 const App = () => {
   return (
     <AuthProvider>

@@ -12,11 +12,18 @@ const AuthProvider = ({ children }) => {
       try {
         const token = localStorage.getItem('token');
         if (token) {
+          // Debug: Check if token is retrieved correctly
+          //console.log("Retrieved Token: ", token);
+
           const { data } = await axios.get(`${baseUrl}/api/auth/check`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
           });
+
+          // Debug: Check if user data is received correctly
+         // console.log("User Data: ", data);
+
           setUser(data.user);
         }
       } catch (error) {

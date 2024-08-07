@@ -3,8 +3,9 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
-const listsRoutes = require('./routes/listsRoutes'); // Ensure this path is correct
-const imageRoutes = require('./routes/imageRoutes'); // Include imageRoutes
+const listsRoutes = require('./routes/listsRoutes');
+const imageRoutes = require('./routes/imageRoutes');
+const helmet = require('helmet');
 require('dotenv').config();
 
 const app = express();
@@ -21,8 +22,19 @@ mongoose.connect(dbPassword, {
 .catch((err) => console.error('MongoDB connection error:', err));
 
 app.use('/api/auth', authRoutes);
-app.use('/api/lists', listsRoutes); // Ensure this route is correct
-app.use('/api/images', imageRoutes); // Add imageRoutes
+app.use('/api/lists', listsRoutes);
+app.use('/api/images', imageRoutes);
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"], // Allow inline scripts
+      styleSrc: ["'self'", "'unsafe-inline'"],  // Allow inline styles
+    },
+  },
+}));
+
 
 app.get('/', (req, res) => {
   res.send('API is running...');
