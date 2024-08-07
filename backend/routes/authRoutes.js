@@ -151,6 +151,44 @@ const transporter = nodemailer.createTransport({
 });
 
 // User signup route
+// router.post('/signup', async (req, res) => {
+//   const { email, password, name } = req.body;
+
+//   try {
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).json({ error: 'User already exists. Try with another email ID.' });
+//     }
+
+//     const newUser = new User({ email, password, name, isVerified: false });
+//     await newUser.save();
+
+//     // Generate verification token
+//     const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+//     const verificationLink = `${process.env.BASE_URL}/api/auth/verify/${token}`;
+
+//     // Send verification email
+//     const mailOptions = {
+//       from: process.env.EMAIL_USER,
+//       to: email,
+//       subject: 'Verify your email',
+//       html: `<p>Click <a href="${verificationLink}">here</a> to verify your email.</p>`,
+//     };
+
+//     transporter.sendMail(mailOptions, (error, info) => {
+//       if (error) {
+//         console.error('Error sending verification email:', error);
+//         return res.status(500).json({ error: 'Signup successful, but error sending verification email' });
+//       }
+//       console.log('Verification email sent:', info.response);
+//     });
+
+//     res.status(201).json({ message: 'User created! Verification email sent.' });
+//   } catch (error) {
+//     console.error('Error during signup:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
 router.post('/signup', async (req, res) => {
   const { email, password, name } = req.body;
 
@@ -163,11 +201,21 @@ router.post('/signup', async (req, res) => {
     const newUser = new User({ email, password, name, isVerified: false });
     await newUser.save();
 
-    // Generate verification token
-    const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    // Debug logging for JWT_SECRET
+    console.log('JWT_SECRET:', process.env.JWT_SECRET);
+
+    // Token generation
+    let token;
+    try {
+      token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      console.log('Token generated successfully');
+    } catch (error) {
+      console.error('Error generating token:', error);
+      return res.status(500).json({ error: 'Error generating token' });
+    }
+
     const verificationLink = `${process.env.BASE_URL}/api/auth/verify/${token}`;
 
-    // Send verification email
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
@@ -189,6 +237,7 @@ router.post('/signup', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // User login route
 router.post('/login', async (req, res) => {
