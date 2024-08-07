@@ -55,6 +55,11 @@ const LoginPage = () => {
             required
           />
           <button type="submit" className="login-button">Login</button>
+         <div>
+         <a href="https://google.com">Forgot password</a>
+         <a href="/signup">New User ? Register Now</a>
+         </div>
+
         </form>
         {error && <p className="login-error">{error}</p>}
       </div>
