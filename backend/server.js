@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const cors = require('cors');  // Importing cors only once
+const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const listsRoutes = require('./routes/listsRoutes');
 const imageRoutes = require('./routes/imageRoutes');
@@ -11,10 +11,25 @@ require('dotenv').config();
 const app = express();
 app.use(bodyParser.json());
 
-// Configuring CORS
+// Configuring CORS to allow multiple origins
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5000',
+  'https://httppaw.onrender.com',
+  'https://http-paw.vercel.app'
+];
+
 app.use(cors({
-  origin: 'http://localhost:3000', // your frontend URL
-  credentials: true,
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
 
 const dbPassword = process.env.MONGO_URL;
