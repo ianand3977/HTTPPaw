@@ -293,17 +293,22 @@ router.post('/login', async (req, res) => {
 // Check user route (protected)
 router.get('/check', protect, async (req, res) => {
   try {
+    // Fetch the user by the ID stored in the request object by the protect middleware
     const user = await User.findById(req.user._id).select('-password');
+    
+    // Check if the user exists
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+    
+    // Send the user data as a response
     res.json({ user });
   } catch (error) {
     console.error('Error fetching user:', error);
+    // Handle unexpected errors
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 
 // Verify email route
 router.get('/verify/:token', async (req, res) => {
