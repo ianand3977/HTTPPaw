@@ -28,20 +28,21 @@ require('dotenv').config();
 const protect = async (req, res, next) => {
   let token;
 
+  // Check if the authorization header contains a Bearer token
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
-      // Extract token from the header
+      // Extract the token from the authorization header
       token = req.headers.authorization.split(' ')[1];
 
-      // Verify the token
+      // Verify the JWT token using the secret key
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      console.log("Decoded JWT:", decoded); // Debugging step
+      console.log("Decoded JWT:", decoded); // Debugging: Log the decoded token
 
-      // Find the user by decoded ID (use decoded.id)
+      // Find the user by the decoded ID
       req.user = await User.findById(decoded.id).select('-password');
-      console.log("Fetched user:", req.user); // Debugging step
+      console.log("Fetched user:", req.user); // Debugging: Log the user details
 
-      // Check if the user exists
+      // Check if the user exists in the database
       if (!req.user) {
         return res.status(404).json({ error: 'User not found' });
       }
@@ -51,9 +52,10 @@ const protect = async (req, res, next) => {
         return res.status(403).json({ error: 'User email not verified' });
       }
 
+      // Proceed to the next middleware or route handler
       next();
     } catch (error) {
-      console.error('Token validation error:', error);
+      console.error('Token validation error:', error); // Log the error for debugging
 
       // Handle specific JWT errors
       if (error.name === 'TokenExpiredError') {
@@ -65,9 +67,9 @@ const protect = async (req, res, next) => {
       }
     }
   } else {
+    // If no token is provided in the header
     return res.status(401).json({ error: 'Not authorized, no token' });
   }
 };
 
 module.exports = { protect };
-
