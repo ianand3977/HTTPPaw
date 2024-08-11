@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import { baseUrl } from './urls'; // Import baseUrl
+import { baseUrl } from './urls';
 
 const AuthContext = createContext();
 
@@ -12,35 +12,42 @@ const AuthProvider = ({ children }) => {
       try {
         const token = localStorage.getItem('token');
         if (token) {
-          // Debug: Check if token is retrieved correctly
-          //console.log("Retrieved Token: ", token);
-
           const { data } = await axios.get(`${baseUrl}/api/auth/check`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
           });
 
-          // Debug: Check if user data is received correctly
-         // console.log("User Data: ", data);
-
           setUser(data.user);
+        } else {
+          console.warn("No token found in localStorage");
         }
       } catch (error) {
         console.error('Error checking user:', error);
-        setUser(null);
+        if (error.response && error.response.status === 401) {
+          console.log("Unauthorized access - redirecting to login.");
+          setUser(null);
+        }
       }
     };
 
     checkUser();
   }, []);
 
-  const login = async (credentials) => {
+  const login = async (credentialsOrToken, token = null) => {
     try {
-      const { data } = await axios.post(`${baseUrl}/api/auth/login`, credentials);
-      localStorage.setItem('token', data.token);
-      setUser(data.user);
+      if (token) {
+        // OAuth Login
+        localStorage.setItem('token', token);
+        setUser(credentialsOrToken); // credentialsOrToken contains user info in this case
+      } else {
+        // Traditional email/password login
+        const { data } = await axios.post(`${baseUrl}/api/auth/login`, credentialsOrToken);
+        localStorage.setItem('token', data.token);
+        setUser(data.user);
+      }
     } catch (error) {
+      console.error("Login failed:", error);
       throw new Error('Login failed');
     }
   };

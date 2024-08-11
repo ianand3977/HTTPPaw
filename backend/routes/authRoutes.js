@@ -135,9 +135,14 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const User = require('../models/User');
 const { protect } = require('../middleware/authMiddleware');
+const axios = require('axios');
+
 require('dotenv').config();
 
 const router = express.Router();
+const { googleLogin } = require('../controllers/authController');
+
+
 
 // Setup Nodemailer transporter
 const transporter = nodemailer.createTransport({
@@ -149,6 +154,10 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS_KEY,
   },
 });
+
+
+// Google Login Route
+router.post('/google', googleLogin);
 
 // User signup route
 // router.post('/signup', async (req, res) => {
@@ -243,22 +252,36 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
+  // Check if password is provided
+  if (!password) {
+    console.log('Password not provided');
+    return res.status(400).json({ error: 'Password is required' });
+  }
+
   try {
+    console.log('Login Attempt:', { email, password });
+
     const user = await User.findOne({ email });
     if (!user) {
+      console.log('User not found:', email);
       return res.status(404).json({ error: 'User not found' });
     }
 
     if (!user.isVerified) {
+      console.log('Email not verified:', email);
       return res.status(403).json({ error: 'Email not verified' });
     }
 
     const isPasswordValid = await user.matchPassword(password);
     if (!isPasswordValid) {
+      console.log('Invalid password for user:', email);
       return res.status(401).json({ error: 'Invalid password' });
     }
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    console.log('Login successful:', { token, user: { _id: user._id, email: user.email, name: user.name } });
+
     res.json({ token, user: { _id: user._id, email: user.email, name: user.name } });
   } catch (error) {
     console.error('Error during login:', error);
@@ -266,15 +289,21 @@ router.post('/login', async (req, res) => {
   }
 });
 
+
 // Check user route (protected)
 router.get('/check', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('-password');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
     res.json({ user });
   } catch (error) {
+    console.error('Error fetching user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // Verify email route
 router.get('/verify/:token', async (req, res) => {

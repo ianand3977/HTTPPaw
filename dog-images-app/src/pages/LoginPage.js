@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext';
+import { GoogleLogin } from '@react-oauth/google';
 import './LoginPage.css';  // Import the CSS file for styling
 import { baseUrl } from '../urls'; // Import baseUrl
 
@@ -23,7 +24,7 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(`${baseUrl}/api/auth/login`, { email, password });
-      login({ email, password }, data.token); // Pass user and token to login function
+      login(data.user, data.token); // Pass user and token to login function
       navigate('/search');
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {
@@ -31,6 +32,19 @@ const LoginPage = () => {
       } else {
         setError('Login failed. Please check your credentials and try again.');
       }
+    }
+  };
+
+  const handleGoogleLoginSuccess = async (credentialResponse) => {
+    const token = credentialResponse.credential; // Get the Google token
+
+    try {
+      const { data } = await axios.post(`${baseUrl}/api/auth/google`, { token });
+      login(data.user, data.token); // Use the login function from context to set the user and token
+      navigate('/search');
+    } catch (error) {
+      console.error('Google login failed:', error);
+      setError('Google login failed. Please try again.');
     }
   };
 
@@ -64,6 +78,10 @@ const LoginPage = () => {
             <p>New User? <a href="/signup">Register Now</a></p>
           </div>
         </form>
+        <GoogleLogin
+          onSuccess={handleGoogleLoginSuccess}
+          onError={() => setError('Google login failed. Please try again.')}
+        />
         {error && <p className="login-error">{error}</p>}
       </div>
     </div>

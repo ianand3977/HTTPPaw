@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const cors = require('cors');
+const cors = require('cors');  // Importing cors only once
 const authRoutes = require('./routes/authRoutes');
 const listsRoutes = require('./routes/listsRoutes');
 const imageRoutes = require('./routes/imageRoutes');
@@ -10,7 +10,12 @@ require('dotenv').config();
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors());
+
+// Configuring CORS
+app.use(cors({
+  origin: 'http://localhost:3000', // your frontend URL
+  credentials: true,
+}));
 
 const dbPassword = process.env.MONGO_URL;
 
@@ -34,7 +39,6 @@ app.use(helmet({
     },
   },
 }));
-
 
 app.get('/', (req, res) => {
   res.send('API is running...');

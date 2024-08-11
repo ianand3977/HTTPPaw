@@ -30,13 +30,39 @@ const protect = async (req, res, next) => {
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
+      // Extract token from the header
       token = req.headers.authorization.split(' ')[1];
+
+      // Verify the token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findById(decoded.userId).select('-password');
+      console.log("Decoded JWT:", decoded); // Debugging step
+
+      // Find the user by decoded ID (use decoded.id)
+      req.user = await User.findById(decoded.id).select('-password');
+      console.log("Fetched user:", req.user); // Debugging step
+
+      // Check if the user exists
+      if (!req.user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      // Check if the user's email is verified
+      if (!req.user.isVerified) {
+        return res.status(403).json({ error: 'User email not verified' });
+      }
+
       next();
     } catch (error) {
       console.error('Token validation error:', error);
-      return res.status(401).json({ error: 'Not authorized, token failed' });
+
+      // Handle specific JWT errors
+      if (error.name === 'TokenExpiredError') {
+        return res.status(401).json({ error: 'Token expired, please login again' });
+      } else if (error.name === 'JsonWebTokenError') {
+        return res.status(401).json({ error: 'Invalid token' });
+      } else {
+        return res.status(401).json({ error: 'Not authorized, token failed' });
+      }
     }
   } else {
     return res.status(401).json({ error: 'Not authorized, no token' });
@@ -44,3 +70,4 @@ const protect = async (req, res, next) => {
 };
 
 module.exports = { protect };
+
